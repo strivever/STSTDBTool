@@ -20,7 +20,6 @@ typedef enum ST_DB_ActionType
 } ST_DB_ActionType;
 @interface STDBTool : NSObject
 @property(nonatomic,strong) FMDatabaseQueue *dbQueue;
-
 @property(nonatomic,strong) FMDatabaseQueue *dbQueue2;
 @property(nonatomic,strong) FMDatabaseQueue *dbQueue3;
 + (STDBTool *)shareInstance;
@@ -108,4 +107,21 @@ typedef enum ST_DB_ActionType
  *  @param  block                       返回执行结果的block
  */
 -(void)executeDbQueue2TransactionSqlList:(NSArray *)sqlStrArr withBlock:(void(^)(BOOL bRet, NSString *msg, BOOL *bRollback))block;
+/**
+ *  @brief                  批量处理更新或者新增sql语句，不需要返回记录集  无事务处理
+ *
+ *  @param sqlStrList       sql语句数组update或者insert into语句
+ *  @param db               FMDatabase数据库对象
+ *  @param block            返回执行结果的block
+ */
+
+- (void)executeSQLList:(NSArray *)sqlStrList db:(FMDatabase *)db withBlock:(void(^)(BOOL bRet, NSString *msg))block;
+
+/**
+ *  @brief                  批量处理更新或者新增sql语句，不需要返回记录集  无事务处理
+ *
+ *  @param sqlStrList       sql语句数组update或者insert into语句
+ *  @param block            返回执行结果的block
+ */
+- (void)executeSQLList:(NSArray *)sqlStrList  withBlock:(void(^)(BOOL bRet, NSString *msg))block;
 @end

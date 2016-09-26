@@ -22,8 +22,8 @@ static STDBTool *sharedManager=nil;
     if (self = [super init]) {
         NSFileManager * fmManger = [NSFileManager defaultManager];
         NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString * dbPath = [NSString stringWithFormat:@"%@/BookData",[paths count] > 0 ? paths.firstObject : nil];
-        dbPath = [dbPath stringByAppendingPathComponent:ST_DB_NAME];
+        NSString * dbPath = [NSString stringWithFormat:@"%@/BookData.db",[paths count] > 0 ? paths.firstObject : nil];
+//        dbPath = [dbPath stringByAppendingPathComponent:ST_DB_NAME];
         if (![fmManger fileExistsAtPath:dbPath]) {
             [fmManger createFileAtPath:dbPath contents:nil attributes:nil];
         }
@@ -177,7 +177,6 @@ static STDBTool *sharedManager=nil;
             block(NO,[db lastErrorMessage]);
             NSLog(@"da_error_%@",[db lastErrorMessage]);
         }
-        
         int nCount = 0;
         if ([rs next]) {
             //获取查询数据的个数
@@ -401,8 +400,30 @@ static STDBTool *sharedManager=nil;
         }
     }
     block(bRet,nil);
+    
 }
 
+
+/**
+ *  @brief                  批量处理更新或者新增sql语句，不需要返回记录集  无事务处理
+ *
+ *  @param sqlStrList       sql语句数组update或者insert into语句
+ *  @param block            返回执行结果的block
+ */
+- (void)executeSQLList:(NSArray *)sqlStrList  withBlock:(void(^)(BOOL bRet, NSString *msg))block{
+    __block BOOL bRet = NO;
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        for (NSString * sql in sqlStrList) {
+           bRet = [db executeUpdate:sql];
+            if ([db hadError]) {
+                block(bRet,[db lastErrorMessage]);
+                NSLog(@"executeSQLList Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+                break;
+            }
+        }
+    }];
+     block(bRet,nil);
+}
 //插入创建表数组
 - (NSArray *)setSqliArray{
     NSMutableArray * sqlList = @[].mutableCopy;

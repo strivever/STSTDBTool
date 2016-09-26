@@ -17,6 +17,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+//    NSFileManager * fmManger = [NSFileManager defaultManager];
+//    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    NSString * dbPath = [NSString stringWithFormat:@"%@/BookData",[paths count] > 0 ? paths.firstObject : nil];
+//    dbPath = [dbPath stringByAppendingPathComponent:@"st_reader.db"];
+//    if (![fmManger fileExistsAtPath:dbPath]) {
+//        [fmManger createFileAtPath:dbPath contents:nil attributes:nil];
+//    }
     return YES;
 }
 
